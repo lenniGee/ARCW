@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16324f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Training">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Rudertraining</title>
+<script src="config.js"></script>
+<style>
+:root{
+  --navy:#16324f; --navy-2:#24507a; --ink:#17202b; --muted:#5f6b7a; --line:#dde3ea;
+  --bg:#f4f6f9; --card:#fff; --ok:#14804a; --ok-bg:#e7f6ee; --bad:#b42318; --bad-bg:#fdecea;
+  --alt:#b45309; --alt-bg:#fff4e5; --chip:#eef2f7; --r:14px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+header.top{position:sticky;top:0;z-index:5;background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 12px}
+header.top h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.2px}
+header.top .sub{font-size:13px;opacity:.8}
+main{padding:12px 12px calc(84px + var(--safe-b));max-width:720px;margin:0 auto}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;background:#fff;border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
+nav.tabs button{flex:1;border:0;background:none;padding:10px 0 12px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button svg{width:24px;height:24px}
+nav.tabs button.on{color:var(--navy);font-weight:700}
+.card{background:var(--card);border-radius:var(--r);padding:14px;margin:10px 0;box-shadow:0 1px 2px rgba(16,32,48,.06),0 0 0 1px rgba(16,32,48,.04)}
+.row{display:flex;gap:8px;align-items:center}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.btn{border:0;border-radius:10px;padding:11px 16px;background:var(--navy);color:#fff;font-weight:600;cursor:pointer}
+.btn.sec{background:var(--chip);color:var(--navy)}
+.btn.ghost{background:none;color:var(--navy);padding:8px 10px}
+.btn.alt{background:var(--alt)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5}
+.chip{display:inline-block;background:var(--chip);color:var(--navy);border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600}
+.chip.ergo{background:#e6eefb}.chip.boot{background:#e3f4f4;color:#0f5e5e}.chip.kraft{background:#f1e9fb;color:#5b2a91}
+.chip.lauf{background:#fdf0e6;color:#9a4b07}.chip.alt{background:var(--alt-bg);color:var(--alt)}
+.weekhead{margin:18px 4px 4px}
+.weekhead h2{font-size:17px;margin:0}
+.weekhead p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.day{margin:14px 4px 2px;font-weight:700;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.day.today{color:var(--navy)}
+.day.today::after{content:" · heute";color:var(--alt)}
+.unit h3{margin:4px 0 2px;font-size:17px}
+.unit .meta{font-size:13px;color:var(--muted)}
+.unit.done{box-shadow:0 0 0 2px var(--ok) inset}
+.unit.missed{box-shadow:0 0 0 2px #f3b8b2 inset}
+.status{font-size:13px;font-weight:700}
+.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}
+details{margin-top:8px}
+details summary{cursor:pointer;color:var(--navy);font-weight:600;font-size:14px;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸ "}details[open] summary::before{content:"▾ "}
+.sect{margin:8px 0 0}
+.sect b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.sect div{white-space:pre-wrap;font-size:14px}
+.altbox{background:var(--alt-bg);border-radius:10px;padding:8px 10px;margin-top:8px}
+.altbox b{color:var(--alt)}
+.ex{font-size:14px;padding:4px 0;border-bottom:1px solid var(--line)}
+.ex:last-child{border:0}
+.pager{display:flex;gap:6px;justify-content:space-between;align-items:center;margin:4px 0}
+.seg{display:flex;background:var(--chip);border-radius:10px;padding:3px}
+.seg button{flex:1;border:0;background:none;padding:8px;border-radius:8px;font-weight:600;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+label.f{display:block;margin:10px 0 0;font-size:13px;font-weight:600;color:var(--muted)}
+label.f .req{color:var(--bad)}
+input.in,select.in,textarea.in{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;margin-top:4px}
+input.in:focus,select.in:focus,textarea.in:focus{outline:2px solid var(--navy-2);border-color:transparent}
+input.in.err{border-color:var(--bad);background:var(--bad-bg)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.zones{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.zones input{text-align:center;padding:9px 4px}
+.zones span{display:block;text-align:center;font-size:12px;font-weight:700;color:var(--muted)}
+.rpe{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:4px}
+.rpe button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 0;font-weight:700}
+.rpe button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+table.iv{width:100%;border-collapse:collapse;margin-top:6px;font-size:14px}
+table.iv th{font-size:11px;color:var(--muted);text-align:left;padding:2px 3px;font-weight:600}
+table.iv td{padding:2px 3px}
+table.iv td.small{white-space:nowrap;font-size:12px}
+table.iv input{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 5px;font-size:14px}
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
+.sheet header{position:sticky;top:0;background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px;display:flex;align-items:center;gap:8px;z-index:2}
+.sheet header h2{font-size:16px;margin:0;flex:1}
+.sheet header button{background:none;border:0;color:#fff;font-size:15px;font-weight:600;padding:6px}
+.sheet .body{padding:4px 12px calc(110px + var(--safe-b));max-width:720px;margin:0 auto}
+.sheet .foot{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + var(--safe-b))}
+.sheet .foot .btn{max-width:696px;margin:0 auto;display:block}
+.photo{display:flex;gap:10px;align-items:center;margin-top:6px}
+.photo img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.bars .b{margin:8px 0}
+.bars .lbl{display:flex;justify-content:space-between;font-size:14px}
+.bars .lbl b{font-variant-numeric:tabular-nums}
+.bars .track{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;margin-top:3px}
+.bars .fill{height:100%;background:var(--navy-2);border-radius:6px}
+.bars .me .fill{background:var(--alt)}
+.bars .me .lbl span{font-weight:700}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + var(--safe-b));background:#1d2733;color:#fff;padding:10px 16px;border-radius:12px;z-index:50;font-size:14px;max-width:90%;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.banner{background:var(--alt-bg);color:#7a3a05;border-radius:10px;padding:10px 12px;font-size:14px;margin:10px 0}
+.center{text-align:center}
+.spinner{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--navy);border-radius:50%;animation:spin 1s linear infinite;margin:30px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.c2list .card{cursor:pointer}
+.hint{font-size:12px;color:var(--muted);margin-top:4px}
+</style>
+</head>
+<body>
+<header class="top"><h1 id="title">Rudertraining</h1><div class="sub" id="subtitle"></div></header>
+<main id="main"><div class="spinner"></div></main>
+<nav class="tabs" id="tabs" hidden>
+  <button data-tab="plan" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Plan</button>
+  <button data-tab="team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Team</button>
+  <button data-tab="me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Ich</button>
+</nav>
+
+<script>
+'use strict';
+/* ====================== Grundlagen ====================== */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem('rt_' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('rt_' + k, JSON.stringify(v)); } catch (e) { toast('Speicher auf dem Handy ist voll.'); } },
+  del(k) { try { localStorage.removeItem('rt_' + k); } catch (e) {} }
+};
+const S = {
+  team: LS.get('team', ''), athlete: LS.get('athlete', null), tab: 'plan',
+  plan: LS.get('plancache', null), weekOffset: 0, teamData: null, teamMode: 'woche', teamOffset: 0
+};
+const ENDURANCE = ['Ergo', 'Boot', 'Lauf', 'Rad', 'Halle', 'Test', 'Sonstiges'];
+const ROWING = ['Ergo', 'Boot'];
+const PHOTO_REQUIRED = ['Ergo', 'Lauf'];
+const ARTEN = ['Ergo', 'Boot', 'Lauf', 'Rad', 'Kraft', 'Halle', 'Regeneration', 'Sonstiges'];
+const WD = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+const WDL = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const monday = d => addDays(new Date(d.getFullYear(), d.getMonth(), d.getDate()), -((d.getDay() + 6) % 7));
+const today = () => ymd(new Date());
+const fmtDay = s => { const d = parse(s); return `${WDL[d.getDay()]}, ${d.getDate()}.${d.getMonth() + 1}.`; };
+const fmtShort = s => { const d = parse(s); return `${d.getDate()}.${d.getMonth() + 1}.`; };
+const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return isNaN(n) ? null : n; };
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'e' + Date.now() + Math.random().toString(16).slice(2)).slice(0, 13);
+
+function toast(msg, ms = 2600) {
+  $$('.toast').forEach(x => x.remove());
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg; document.body.appendChild(t);
+  setTimeout(() => t.remove(), ms);
+}
+
+/* Split <-> Watt (Concept2-Formel: Watt = 2,80 / (s pro m)^3) */
+function splitToSec(s) {
+  if (!s) return null;
+  const m = String(s).trim().replace(',', '.').match(/^(\d+):(\d{1,2}(?:\.\d+)?)$/);
+  return m ? (+m[1]) * 60 + parseFloat(m[2]) : null;
+}
+function secToSplit(sec) {
+  if (!sec || !isFinite(sec)) return '';
+  const m = Math.floor(sec / 60), r = sec - m * 60;
+  return `${m}:${r < 10 ? '0' : ''}${r.toFixed(1)}`;
+}
+const splitToWatt = s => { const sec = splitToSec(s); return sec ? Math.round(2.8 / Math.pow(sec / 500, 3)) : null; };
+const wattToSplit = w => (w > 0 ? secToSplit(500 * Math.cbrt(2.8 / w)) : '');
+
+/* ====================== API ====================== */
+async function api(action, params = {}, post = false) {
+  if (!window.CONFIG || !/^https:\/\//.test(CONFIG.API_URL)) throw new Error('Die App ist noch nicht mit dem Google-Sheet verbunden (config.js).');
+  const body = { action, team: S.team, ...params };
+  const res = post
+    ? await fetch(CONFIG.API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
+    : await fetch(CONFIG.API_URL + '?' + new URLSearchParams(body));
+  const j = await res.json();
+  if (!j.ok) {
+    if (j.error === 'TEAMCODE') { const e = new Error('Team-Code ist falsch oder wurde geändert.'); e.teamcode = true; throw e; }
+    throw new Error(j.error);
+  }
+  return j.data;
+}
+
+/* Warteschlange: Einträge, die ohne Netz gespeichert wurden */
+const Outbox = {
+  list() { return LS.get('outbox', []); },
+  add(item) { const l = this.list(); l.push(item); LS.set('outbox', l); },
+  async flush(silent) {
+    const l = this.list(); if (!l.length) return 0;
+    const rest = []; let sent = 0;
+    for (const it of l) {
+      try { await api('log', it, true); sent++; } catch (e) { rest.push(it); if (e.teamcode) break; }
+    }
+    LS.set('outbox', rest);
+    if (sent && !silent) toast(`${sent} gespeicherte Einträge nachgesendet ✓`);
+    return sent;
+  }
+};
+
+/* ====================== Start ====================== */
+function setHeader(t, sub) { $('#title').textContent = t; $('#subtitle').textContent = sub || ''; }
+
+async function boot() {
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  $$('#tabs button').forEach(b => b.onclick = () => go(b.dataset.tab));
+  window.addEventListener('online', () => Outbox.flush());
+  if (!S.team || !S.athlete) return renderSetup();
+  $('#tabs').hidden = false;
+  go('plan');
+  Outbox.flush(true).then(n => n && loadPlan());
+}
+
+function go(tab) {
+  S.tab = tab;
+  $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  window.scrollTo(0, 0);
+  if (tab === 'plan') { renderPlan(); loadPlan(); }
+  if (tab === 'team') renderTeam(true);
+  if (tab === 'me') renderMe();
+}
+
+/* ====================== Einrichtung ====================== */
+function renderSetup(step = 1, athletes = []) {
+  $('#tabs').hidden = true;
+  setHeader('Willkommen', 'Einmalig einrichten – kein Login nötig');
+  const m = $('#main');
+  if (step === 1) {
+    m.innerHTML = `<div class="card">
+      <h3 style="margin-top:0">Team-Code</h3>
+      <p class="muted small">Den Code bekommst du von deinem Trainer.</p>
+      <input class="in" id="code" autocomplete="off" autocapitalize="off" placeholder="Team-Code" value="${esc(S.team)}">
+      <button class="btn block" id="go" style="margin-top:12px">Weiter</button></div>`;
+    $('#go').onclick = async () => {
+      S.team = $('#code').value.trim();
+      $('#go').disabled = true; $('#go').textContent = 'Prüfe …';
+      try {
+        const d = await api('init');
+        LS.set('team', S.team);
+        renderSetup(2, d.athletes);
+      } catch (e) { toast(e.message, 4000); $('#go').disabled = false; $('#go').textContent = 'Weiter'; }
+    };
+    return;
+  }
+  const groups = {};
+  athletes.forEach(a => (groups[a.plan] = groups[a.plan] || []).push(a));
+  m.innerHTML = `<div class="card"><h3 style="margin-top:0">Wer bist du?</h3>
+    ${Object.keys(groups).map(g => `<p class="small muted" style="margin:12px 0 4px">${esc(g)}</p>
+      ${groups[g].map(a => `<button class="btn sec block" style="margin:4px 0;text-align:left" data-n="${esc(a.name)}">${esc(a.name)}</button>`).join('')}`).join('')}
+    </div>`;
+  $$('[data-n]', m).forEach(b => b.onclick = () => {
+    S.athlete = athletes.find(a => a.name === b.dataset.n);
+    LS.set('athlete', S.athlete); LS.del('plancache'); S.plan = null;
+    $('#tabs').hidden = false; go('plan');
+    setTimeout(installHint, 800);
+  });
+}
+
+function installHint() {
+  if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) return;
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  toast(ios ? 'Tipp: Teilen ⬆︎ → „Zum Home-Bildschirm“, dann startet die App wie eine normale App.'
+            : 'Tipp: Menü ⋮ → „App installieren“ bzw. „Zum Startbildschirm hinzufügen“.', 6000);
+}
+
+/* ====================== Plan ====================== */
+async function loadPlan() {
+  const from = ymd(addDays(monday(new Date()), -28));
+  const to = ymd(addDays(monday(new Date()), 7 * 9));
+  try {
+    const d = await api('plan', { athlete: S.athlete.name, from, to });
+    S.plan = d; LS.set('plancache', d);
+    if (d.athlete) { S.athlete = { ...S.athlete, ...d.athlete }; LS.set('athlete', S.athlete); }
+    if (S.tab === 'plan') renderPlan();
+  } catch (e) {
+    if (e.teamcode) { toast(e.message, 4000); S.team = ''; LS.del('team'); return renderSetup(); }
+    if (S.tab === 'plan') { if (!S.plan) $('#main').innerHTML = `<div class="banner">${esc(e.message)}</div>`; else toast('Offline – zeige gespeicherten Plan.'); }
+  }
+}
+
+function logsFor(unitId) {
+  const fromServer = (S.plan?.logs || []).filter(l => l.planId === unitId);
+  const pending = Outbox.list().filter(o => o.entry.planId === unitId).map(o => ({ ...o.entry, pending: true }));
+  return [...fromServer, ...pending];
+}
+
+function weekInfo(dateStr) {
+  return (S.plan?.wochen || []).find(w => w.von <= dateStr && w.bis >= dateStr);
+}
+
+function renderPlan() {
+  const a = S.athlete;
+  setHeader(a.name, a.plan + (a.kraftplan && a.kraftplan !== a.plan ? ' · Kraft: ' + a.kraftplan : ''));
+  const m = $('#main');
+  if (!S.plan) { m.innerHTML = '<div class="spinner"></div>'; return; }
+  const mon = addDays(monday(new Date()), 7 * S.weekOffset);
+  const days = [...Array(7)].map((_, i) => ymd(addDays(mon, i)));
+  const wi = weekInfo(days[0]) || weekInfo(days[6]);
+  const pend = Outbox.list().length;
+  let html = `${pend ? `<div class="banner">${pend} Eintrag/Einträge noch nicht gesendet (kein Netz). <button class="btn ghost" id="flush">Jetzt senden</button></div>` : ''}
+    <div class="pager">
+      <button class="btn sec" id="prev">‹</button>
+      <div class="center"><b>${fmtShort(days[0])} – ${fmtShort(days[6])}</b><br><span class="small muted">${S.weekOffset === 0 ? 'diese Woche' : (S.weekOffset > 0 ? 'in ' + S.weekOffset + ' Wo.' : 'vor ' + (-S.weekOffset) + ' Wo.')}</span></div>
+      <button class="btn sec" id="next">›</button>
+    </div>
+    ${S.weekOffset !== 0 ? '<div class="center"><button class="btn ghost" id="now">Zurück zu heute</button></div>' : ''}
+    ${wi ? `<div class="weekhead"><h2>Woche ${esc(wi.woche)} · ${esc(wi.thema)}</h2>${wi.hinweis ? `<p>${esc(wi.hinweis)}</p>` : ''}</div>` : ''}`;
+  const t = today();
+  for (const d of days) {
+    const units = S.plan.units.filter(u => u.datum === d);
+    const extra = [...(S.plan.logs || []).filter(l => l.datum === d && !l.planId), ...Outbox.list().filter(o => o.entry.datum === d && !o.entry.planId).map(o => ({ ...o.entry, pending: true }))];
+    html += `<div class="day ${d === t ? 'today' : ''}">${fmtDay(d)}</div>`;
+    if (!units.length && !extra.length) html += `<div class="card muted small">Kein Training geplant.</div>`;
+    units.forEach(u => html += unitCard(u, d <= t));
+    extra.forEach(l => html += `<div class="card unit done"><div class="row between"><span class="chip">${esc(l.art || '')}</span><span class="status ok">✓ ${l.dauer} min${l.pending ? ' · wartet auf Netz' : ''}</span></div><h3>${esc(l.einheit || 'Zusätzliche Einheit')}</h3></div>`);
+    if (d <= t) html += `<div class="center"><button class="btn ghost small" data-extra="${d}">+ Zusätzliche Einheit eintragen</button></div>`;
+  }
+  m.innerHTML = html;
+  $('#prev').onclick = () => { S.weekOffset--; renderPlan(); };
+  $('#next').onclick = () => { S.weekOffset++; renderPlan(); };
+  $('#now') && ($('#now').onclick = () => { S.weekOffset = 0; renderPlan(); });
+  $('#flush') && ($('#flush').onclick = () => Outbox.flush().then(() => loadPlan()));
+  $$('[data-log]', m).forEach(b => b.onclick = () => openLog(S.plan.units.find(u => u.id === b.dataset.log), b.dataset.replace === '1'));
+  $$('[data-extra]', m).forEach(b => b.onclick = () => openLog({ id: '', datum: b.dataset.extra, einheit: '', art: 'Ergo', dauer: '', intervalle: '' }));
+}
+
+function artChip(art) {
+  const c = { Ergo: 'ergo', Boot: 'boot', Kraft: 'kraft', Lauf: 'lauf' }[art] || '';
+  return `<span class="chip ${c}">${esc(art)}</span>`;
+}
+
+function unitCard(u, canLog) {
+  const logs = logsFor(u.id);
+  const free = u.art === 'Frei';
+  const done = logs.length > 0;
+  const missed = !done && canLog && u.datum < today() && !free;
+  const sec = (label, txt) => txt ? `<div class="sect"><b>${label}</b><div>${esc(txt)}</div></div>` : '';
+  const ex = (u.uebungen || []).map(e => `<div class="ex"><b>${esc(e.uebung)}</b> · ${esc(e.saetze)}×${esc(e.wdh)}${e.vorgabe ? ' · ' + esc(e.vorgabe) : ''}${e.pause ? ' · Pause ' + esc(e.pause) : ''}
+      ${e.letztes ? `<div class="small muted">zuletzt (${fmtShort(e.letztes.datum)}): ${e.letztes.saetze.map(s => `${esc(s.wdh)}×${esc(s.kg)} kg`).join(', ')}</div>` : ''}</div>`).join('');
+  return `<div class="card unit ${done ? 'done' : ''} ${missed ? 'missed' : ''}">
+    <div class="row between wrap">
+      <div class="row wrap">${artChip(u.art)}${u.zone ? `<span class="chip">${esc(u.zone)}</span>` : ''}${u.dauer ? `<span class="chip">${u.dauer} min</span>` : ''}</div>
+      ${done ? `<span class="status ok">✓ ${logs.map(l => l.dauer + ' min' + (l.variante === 'Alternative' ? ' (Alt.)' : '') + (l.pending ? ' · wartet auf Netz' : '')).join(', ')}</span>` : (missed ? '<span class="status bad">nicht eingetragen</span>' : '')}
+    </div>
+    <h3>${esc(u.einheit)}</h3>
+    ${u.zeit ? `<div class="meta">${esc(u.zeit)}</div>` : ''}
+    ${free ? (u.haupt ? `<div class="small muted" style="margin-top:6px">${esc(u.haupt)}</div>` : '') : `
+    <details ${u.datum === today() ? 'open' : ''}><summary>Ablauf</summary>
+      ${sec('Aufwärmen', u.warm)}${sec('Hauptteil', u.haupt)}${sec('Ausfahren', u.cool)}
+      ${ex ? `<div class="sect"><b>Kraftübungen (${esc(u.kraft)})</b>${ex}</div>` : ''}
+      ${u.hinweis ? sec('Hinweis', u.hinweis) : ''}
+    </details>
+    ${u.alt ? `<div class="altbox small"><b>Alternative${u.altArt ? ' · ' + esc(u.altArt) : ''}:</b> <span style="white-space:pre-wrap">${esc(u.alt)}</span></div>` : ''}
+    ${canLog ? `<div style="margin-top:10px">${done
+        ? `<button class="btn ghost small" data-log="${esc(u.id)}" data-replace="1">Eintrag korrigieren</button>`
+        : `<button class="btn block" data-log="${esc(u.id)}">Protokollieren</button>`}</div>` : ''}`}
+  </div>`;
+}
+
+/* ====================== Protokoll-Formular ====================== */
+function parseKurzform(k) {
+  const s = String(k || '').trim().toLowerCase().replace('×', 'x');
+  if (!s) return [];
+  const m = s.match(/^(?:(\d+)\s*x\s*)?([\d:.]+\s*m?|\d+:\d{2})(?:\s*\/\s*([\d:]+))?$/);
+  if (!m) return [];
+  const n = Math.min(+(m[1] || 1), 40), piece = m[2].trim();
+  const isDist = /m$/.test(piece);
+  return [...Array(n)].map(() => ({ soll: piece, distanz: isDist ? parseInt(piece) : '', zeit: isDist ? '' : piece, split: '', watt: '', sf: '', hf: '' }));
+}
+
+let F = null; // aktueller Formularzustand
+
+function openLog(u, replace = false) {
+  const kraftSets = [];
+  (u.uebungen || []).forEach(e => {
+    for (let i = 1; i <= Math.max(1, Math.round(e.saetze)); i++) {
+      const last = e.letztes?.saetze?.[i - 1] || e.letztes?.saetze?.slice(-1)[0];
+      kraftSets.push({ uebung: e.uebung, satz: i, wdh: /^\d+$/.test(e.wdh) ? e.wdh : '', kg: last?.kg ?? '', planWdh: e.wdh, vorgabe: e.vorgabe });
+    }
+  });
+  F = {
+    unit: u, replace, variante: 'Plan', art: u.art === 'Test' ? 'Ergo' : (u.art || 'Ergo'), einheit: u.einheit,
+    dauer: u.dauer || '', distanz: '', hfAvg: '', hfMax: '', zonen: ['', '', '', '', '', ''], split: '', watt: '', sf: '', rpe: null,
+    intervalle: parseKurzform(u.intervalle), kraft: kraftSets, notiz: '', photo: null, quelle: 'App'
+  };
+  renderLog();
+}
+
+function renderLog() {
+  const u = F.unit;
+  let el = $('#logsheet');
+  if (!el) { el = document.createElement('div'); el.id = 'logsheet'; el.className = 'sheet'; document.body.appendChild(el); }
+  const isEnd = ENDURANCE.includes(F.art), isRow = ROWING.includes(F.art), isKraft = F.art === 'Kraft';
+  const photoReq = PHOTO_REQUIRED.includes(F.art);
+  const req = '<span class="req">*</span>';
+  const zSum = F.zonen.reduce((s, v) => s + (num(v) || 0), 0);
+  el.innerHTML = `
+  <header><button id="close">✕</button><h2>${u.id ? esc(u.einheit) : 'Zusätzliche Einheit'} · ${fmtShort(u.datum)}</h2></header>
+  <div class="body">
+    ${F.replace ? '<div class="banner">Der bisherige Eintrag zu dieser Einheit wird ersetzt.</div>' : ''}
+    ${u.alt ? `<div class="card"><div class="seg"><button data-v="Plan" class="${F.variante === 'Plan' ? 'on' : ''}">Wie geplant</button><button data-v="Alternative" class="${F.variante === 'Alternative' ? 'on' : ''}">Alternative</button></div>
+      ${F.variante === 'Alternative' ? `<div class="altbox small" style="white-space:pre-wrap">${esc(u.alt)}</div>` : ''}</div>` : ''}
+    <div class="card">
+      ${!u.id ? `<label class="f">Was hast du gemacht? ${req}<input class="in" id="f-einheit" value="${esc(F.einheit)}" placeholder="z. B. Ergo 60 min Z2"></label>` : ''}
+      <label class="f">Art<select class="in" id="f-art">${ARTEN.map(a => `<option ${a === F.art ? 'selected' : ''}>${a}</option>`).join('')}</select></label>
+      <div class="grid2">
+        <label class="f">Dauer (min) ${req}<input class="in" id="f-dauer" inputmode="numeric" value="${esc(F.dauer)}"></label>
+        ${isEnd ? `<label class="f">Distanz (m)<input class="in" id="f-distanz" inputmode="numeric" value="${esc(F.distanz)}"></label>` : '<div></div>'}
+      </div>
+      ${isRow ? `<div id="c2box" style="margin-top:12px"></div>` : ''}
+    </div>
+    ${isEnd ? `<div class="card">
+      <div class="grid2">
+        <label class="f">HF Ø ${req}<input class="in" id="f-hfAvg" inputmode="numeric" value="${esc(F.hfAvg)}"></label>
+        <label class="f">HF max<input class="in" id="f-hfMax" inputmode="numeric" value="${esc(F.hfMax)}"></label>
+      </div>
+      <label class="f">Zeit in den Zonen (min) ${req}</label>
+      <div class="zones">${F.zonen.map((z, i) => `<div><span>Z${i + 1}</span><input class="in" data-z="${i}" inputmode="decimal" value="${esc(z)}"></div>`).join('')}</div>
+      <div class="hint" id="zsum">Summe ${zSum} min${num(F.dauer) ? ' von ' + num(F.dauer) + ' min' : ''} – steht in der Auswertung deiner Pulsuhr.</div>
+      ${isRow ? `<div class="grid3">
+        <label class="f">Split Ø /500m ${req}<input class="in" id="f-split" placeholder="2:05.0" inputmode="decimal" value="${esc(F.split)}"></label>
+        <label class="f">Watt Ø<input class="in" id="f-watt" inputmode="numeric" value="${esc(F.watt)}"></label>
+        <label class="f">SF Ø ${req}<input class="in" id="f-sf" inputmode="decimal" value="${esc(F.sf)}"></label>
+      </div><div class="hint">Split oder Watt reicht – das andere rechnet die App aus.</div>`
+      : (F.art === 'Lauf' ? `<label class="f">Pace Ø (min/km)<input class="in" id="f-split" placeholder="5:30" value="${esc(F.split)}"></label>` : '')}
+    </div>` : ''}
+    ${isRow ? `<div class="card"><div class="row between"><b>Intervalle</b><button class="btn ghost small" id="addiv">+ Zeile</button></div>
+      ${F.intervalle.length ? `<table class="iv"><tr><th>#</th><th>Soll</th><th>Zeit</th><th>Split</th><th>Watt</th><th>SF</th><th>HF</th></tr>
+      ${F.intervalle.map((iv, i) => `<tr><td>${i + 1}</td><td class="small muted">${esc(iv.soll || '')}</td>
+        ${['zeit', 'split', 'watt', 'sf', 'hf'].map(k => `<td><input data-iv="${i}" data-k="${k}" inputmode="decimal" value="${esc(iv[k])}"></td>`).join('')}</tr>`).join('')}</table>`
+      : '<div class="hint">Keine Intervalle geplant – bei Bedarf Zeilen hinzufügen.</div>'}</div>` : ''}
+    ${isKraft ? `<div class="card"><b>Gewichte</b>${F.kraft.length ? '' : '<div class="hint">Für diese Einheit ist kein Kraftplan hinterlegt. Übungen unten bei Notiz eintragen.</div>'}
+      ${groupBy(F.kraft, 'uebung').map(([name, sets]) => `<div style="margin-top:12px"><div class="small"><b>${esc(name)}</b> <span class="muted">${esc(sets[0].planWdh)} Wdh${sets[0].vorgabe ? ' · ' + esc(sets[0].vorgabe) : ''}</span></div>
+        <table class="iv"><tr><th>Satz</th><th>Wdh</th><th>kg</th></tr>${sets.map(s => { const i = F.kraft.indexOf(s); return `<tr><td>${s.satz}</td><td><input data-k-i="${i}" data-k-k="wdh" inputmode="numeric" value="${esc(s.wdh)}"></td><td><input data-k-i="${i}" data-k-k="kg" inputmode="decimal" value="${esc(s.kg)}"></td></tr>`; }).join('')}</table></div>`).join('')}
+      <div class="grid2"><label class="f">HF Ø<input class="in" id="f-hfAvg" inputmode="numeric" value="${esc(F.hfAvg)}"></label><div></div></div>
+    </div>` : ''}
+    <div class="card">
+      <label class="f">Anstrengung (RPE 1–10) ${req}</label>
+      <div class="rpe">${[...Array(10)].map((_, i) => `<button data-rpe="${i + 1}" class="${F.rpe === i + 1 ? 'on' : ''}">${i + 1}</button>`).join('')}</div>
+      <div class="hint">1 = sehr leicht · 5 = hart · 10 = maximal</div>
+      <label class="f">Beweisfoto ${photoReq ? req + ' (Ergo-Display, Uhr oder Lauf-App)' : '(optional)'}</label>
+      <div class="photo">${F.photo ? `<img src="data:${F.photo.mime};base64,${F.photo.data}" alt="">` : ''}
+        <label class="btn sec">${F.photo ? 'Anderes Foto' : 'Foto wählen'}<input type="file" id="f-photo" accept="image/*" hidden></label></div>
+      <label class="f">Notiz<textarea class="in" id="f-notiz" rows="3" placeholder="Gefühl, Technik, Besonderheiten …">${esc(F.notiz)}</textarea></label>
+    </div>
+  </div>
+  <div class="foot"><button class="btn block" id="save">Speichern</button></div>`;
+
+  // Ereignisse
+  $('#close', el).onclick = closeLog;
+  $$('[data-v]', el).forEach(b => b.onclick = () => {
+    F.variante = b.dataset.v;
+    if (F.variante === 'Alternative' && u.altArt) F.art = u.altArt;
+    if (F.variante === 'Plan') F.art = u.art === 'Test' ? 'Ergo' : u.art;
+    renderLog();
+  });
+  $('#f-art', el).onchange = e => { F.art = e.target.value; renderLog(); };
+  const bind = (id, key, after) => { const i = $('#' + id, el); if (i) i.oninput = () => { F[key] = i.value; after && after(); }; };
+  bind('f-einheit', 'einheit'); bind('f-dauer', 'dauer', updZ); bind('f-distanz', 'distanz');
+  bind('f-hfAvg', 'hfAvg'); bind('f-hfMax', 'hfMax'); bind('f-sf', 'sf'); bind('f-notiz', 'notiz');
+  bind('f-split', 'split', () => { if (isRow) { const w = splitToWatt(F.split); if (w) { F.watt = w; $('#f-watt', el).value = w; } } });
+  bind('f-watt', 'watt', () => { const s = wattToSplit(num(F.watt)); if (s) { F.split = s; $('#f-split', el).value = s; } });
+  $$('[data-z]', el).forEach(i => i.oninput = () => { F.zonen[+i.dataset.z] = i.value; updZ(); });
+  function updZ() {
+    const s = F.zonen.reduce((a, v) => a + (num(v) || 0), 0);
+    const z = $('#zsum', el); if (z) z.textContent = `Summe ${Math.round(s * 10) / 10} min${num(F.dauer) ? ' von ' + num(F.dauer) + ' min' : ''} – steht in der Auswertung deiner Pulsuhr.`;
+  }
+  $$('[data-iv]', el).forEach(i => i.oninput = () => {
+    const iv = F.intervalle[+i.dataset.iv], k = i.dataset.k; iv[k] = i.value;
+    const row = i.closest('tr');
+    if (k === 'split') { const w = splitToWatt(i.value); if (w) { iv.watt = w; $('[data-k="watt"]', row).value = w; } }
+    if (k === 'watt') { const s = wattToSplit(num(i.value)); if (s) { iv.split = s; $('[data-k="split"]', row).value = s; } }
+  });
+  $('#addiv', el) && ($('#addiv', el).onclick = () => { F.intervalle.push({ soll: '', zeit: '', split: '', watt: '', sf: '', hf: '' }); renderLog(); });
+  $$('[data-k-i]', el).forEach(i => i.oninput = () => { F.kraft[+i.dataset.kI][i.dataset.kK] = i.value; });
+  $$('[data-rpe]', el).forEach(b => b.onclick = () => { F.rpe = +b.dataset.rpe; $$('[data-rpe]', el).forEach(x => x.classList.toggle('on', x === b)); });
+  $('#f-photo', el).onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { F.photo = await compressImage(f); renderLog(); } catch (err) { toast('Foto konnte nicht gelesen werden.'); }
+  };
+  $('#save', el).onclick = saveLog;
+  if (isRow) renderC2Box();
+}
+
+function groupBy(list, key) {
+  const m = new Map(); list.forEach(x => { if (!m.has(x[key])) m.set(x[key], []); m.get(x[key]).push(x); });
+  return [...m.entries()];
+}
+
+function closeLog() { $('#logsheet')?.remove(); F = null; }
+
+function compressImage(file, max = 1600, q = 0.78) {
+  return new Promise((resolve, reject) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      resolve({ mime: 'image/jpeg', data: c.toDataURL('image/jpeg', q).split(',')[1] });
+    };
+    img.onerror = reject; img.src = url;
+  });
+}
+
+function validate() {
+  const errs = []; const el = $('#logsheet');
+  $$('.err', el).forEach(x => x.classList.remove('err'));
+  const mark = id => { const i = $('#' + id, el); if (i) i.classList.add('err'); };
+  if (!F.unit.id && !String(F.einheit).trim()) { errs.push('Bezeichnung'); mark('f-einheit'); }
+  if (!(num(F.dauer) > 0)) { errs.push('Dauer'); mark('f-dauer'); }
+  if (ENDURANCE.includes(F.art)) {
+    if (!(num(F.hfAvg) > 0)) { errs.push('HF Ø'); mark('f-hfAvg'); }
+    if (!F.zonen.some(z => num(z) > 0)) { errs.push('Zeit in Zonen'); $$('[data-z]', el).forEach(i => i.classList.add('err')); }
+    if (ROWING.includes(F.art)) {
+      if (!splitToSec(F.split) && !(num(F.watt) > 0)) { errs.push('Split oder Watt'); mark('f-split'); mark('f-watt'); }
+      if (!(num(F.sf) > 0)) { errs.push('SF'); mark('f-sf'); }
+    }
+  }
+  if (!F.rpe) errs.push('RPE');
+  if (PHOTO_REQUIRED.includes(F.art) && !F.photo) errs.push('Beweisfoto');
+  return errs;
+}
+
+async function saveLog() {
+  const errs = validate();
+  if (errs.length) return toast('Bitte noch ausfüllen: ' + errs.join(', '), 4000);
+  const u = F.unit;
+  const entry = {
+    id: uid(), datum: u.datum, planId: u.id || '', einheit: u.id ? u.einheit : F.einheit.trim(), art: F.art, variante: F.variante,
+    dauer: num(F.dauer), distanz: num(F.distanz) ?? '', hfAvg: num(F.hfAvg) ?? '', hfMax: num(F.hfMax) ?? '',
+    zonen: F.zonen.map(z => num(z) ?? ''), split: F.split || '', watt: num(F.watt) ?? '', sf: num(F.sf) ?? '', rpe: F.rpe,
+    intervalle: F.intervalle.filter(iv => iv.zeit || iv.split || iv.watt || iv.sf || iv.hf), notiz: F.notiz, quelle: F.quelle,
+    kraftEinheit: u.kraft || ''
+  };
+  const payload = { athlete: S.athlete.name, entry, replace: F.replace, photo: F.photo,
+    kraft: F.art === 'Kraft' ? F.kraft.map(k => ({ uebung: k.uebung, satz: k.satz, wdh: k.wdh, kg: k.kg })) : [] };
+  const btn = $('#save'); btn.disabled = true; btn.textContent = 'Speichere …';
+  try {
+    await api('log', payload, true);
+    toast('Gespeichert ✓');
+  } catch (e) {
+    if (e.teamcode) { btn.disabled = false; btn.textContent = 'Speichern'; return toast(e.message, 4000); }
+    if (e instanceof TypeError || !navigator.onLine) {
+      Outbox.add(payload); toast('Kein Netz – wird automatisch nachgesendet.', 3500);
+    } else { btn.disabled = false; btn.textContent = 'Speichern'; return toast('Fehler: ' + e.message, 5000); }
+  }
+  closeLog(); S.teamData = null; renderPlan(); loadPlan();
+}
+
+/* ====================== Concept2 ====================== */
+async function renderC2Box() {
+  const box = $('#c2box'); if (!box) return;
+  box.innerHTML = '<button class="btn sec block" id="c2load">Aus Concept2-Logbuch übernehmen</button>';
+  $('#c2load').onclick = async () => {
+    box.innerHTML = '<div class="spinner" style="margin:10px auto"></div>';
+    try {
+      const d = await api('c2results', { athlete: S.athlete.name, date: F.unit.datum });
+      if (!d.connected) {
+        box.innerHTML = `<div class="hint">Dein Concept2-Logbuch ist noch nicht verbunden.</div><button class="btn sec block" id="c2con" style="margin-top:6px">Concept2 verbinden</button>`;
+        $('#c2con').onclick = connectC2; return;
+      }
+      if (!d.results.length) { box.innerHTML = '<div class="hint">Im Concept2-Logbuch ist für diesen Tag noch nichts. ErgData synchronisiert meist direkt nach dem Training.</div>'; return; }
+      box.innerHTML = `<div class="hint">Welches Ergebnis gehört zu dieser Einheit?</div><div class="c2list">${d.results.map((r, i) =>
+        `<div class="card" data-c2="${i}"><b>${esc(r.uhrzeit)} · ${esc(r.distanz)} m · ${esc(r.zeit)}</b><div class="small muted">${esc(r.split)} /500m · ${esc(r.watt)} W · SF ${esc(r.sf)}${r.hfAvg ? ' · HF ' + esc(r.hfAvg) : ''}${r.intervalle.length ? ' · ' + r.intervalle.length + ' Abschnitte' : ''}</div></div>`).join('')}</div>`;
+      $$('[data-c2]', box).forEach(c => c.onclick = () => applyC2(d.results[+c.dataset.c2]));
+    } catch (e) { box.innerHTML = `<div class="hint">${esc(e.message)}</div>`; }
+  };
+}
+
+function applyC2(r) {
+  Object.assign(F, { distanz: r.distanz || F.distanz, split: r.split || F.split, watt: r.watt || F.watt, sf: r.sf || F.sf,
+    hfAvg: r.hfAvg || F.hfAvg, hfMax: r.hfMax || F.hfMax, quelle: 'Concept2' });
+  if (!num(F.dauer)) F.dauer = r.dauer;
+  if (r.intervalle.length) {
+    const planned = F.intervalle;
+    F.intervalle = r.intervalle.map((p, i) => ({ soll: planned[i]?.soll || '', zeit: p.zeit, split: p.split, watt: p.watt, sf: p.sf, hf: p.hf }));
+  }
+  toast('Concept2-Werte übernommen – bitte HF-Zonen, RPE und Foto ergänzen.', 4000);
+  renderLog();
+}
+
+async function connectC2() {
+  try {
+    const d = await api('c2url', { athlete: S.athlete.name });
+    window.open(d.url, '_blank') || (location.href = d.url);
+  } catch (e) { toast(e.message, 4000); }
+}
+
+/* ====================== Team ====================== */
+async function renderTeam(fetchFresh) {
+  setHeader('Team', 'Absolvierte Minuten');
+  const m = $('#main');
+  if (!S.teamData || fetchFresh) {
+    if (!S.teamData) m.innerHTML = '<div class="spinner"></div>';
+    try {
+      const from = ymd(addDays(new Date(), -400));
+      S.teamData = await api('team', { from, to: today() });
+    } catch (e) { if (!S.teamData) { m.innerHTML = `<div class="banner">${esc(e.message)}</div>`; return; } }
+  }
+  const { start, end, label } = teamRange();
+  const tot = S.teamData.athletes.map(n => {
+    const per = S.teamData.minutes[n] || {};
+    return { n, min: Object.keys(per).filter(d => d >= start && d <= end).reduce((s, d) => s + per[d], 0) };
+  }).sort((a, b) => b.min - a.min || a.n.localeCompare(b.n));
+  const max = Math.max(1, ...tot.map(t => t.min));
+  const sum = tot.reduce((s, t) => s + t.min, 0);
+  m.innerHTML = `
+    <div class="seg">${['tag', 'woche', 'monat'].map(k => `<button data-mode="${k}" class="${S.teamMode === k ? 'on' : ''}">${k[0].toUpperCase() + k.slice(1)}</button>`).join('')}</div>
+    <div class="pager" style="margin-top:10px"><button class="btn sec" id="tprev">‹</button>
+      <div class="center"><b>${label}</b><br><span class="small muted">Team gesamt ${sum} min</span></div>
+      <button class="btn sec" id="tnext" ${S.teamOffset >= 0 ? 'disabled' : ''}>›</button></div>
+    <div class="card bars">${tot.map(t => `<div class="b ${t.n === S.athlete.name ? 'me' : ''}"><div class="lbl"><span>${esc(t.n)}</span><b>${t.min} min</b></div>
+      <div class="track"><div class="fill" style="width:${(t.min / max * 100).toFixed(1)}%"></div></div></div>`).join('')}</div>`;
+  $$('[data-mode]', m).forEach(b => b.onclick = () => { S.teamMode = b.dataset.mode; S.teamOffset = 0; renderTeam(); });
+  $('#tprev').onclick = () => { S.teamOffset--; renderTeam(); };
+  $('#tnext').onclick = () => { if (S.teamOffset < 0) { S.teamOffset++; renderTeam(); } };
+}
+
+function teamRange() {
+  const now = new Date(), o = S.teamOffset;
+  if (S.teamMode === 'tag') {
+    const d = addDays(now, o);
+    return { start: ymd(d), end: ymd(d), label: o === 0 ? 'Heute' : o === -1 ? 'Gestern' : fmtDay(ymd(d)) };
+  }
+  if (S.teamMode === 'woche') {
+    const s = addDays(monday(now), 7 * o);
+    return { start: ymd(s), end: ymd(addDays(s, 6)), label: `${fmtShort(ymd(s))} – ${fmtShort(ymd(addDays(s, 6)))}` };
+  }
+  const s = new Date(now.getFullYear(), now.getMonth() + o, 1), e = new Date(s.getFullYear(), s.getMonth() + 1, 0);
+  return { start: ymd(s), end: ymd(e), label: `${MONTHS[s.getMonth()]} ${s.getFullYear()}` };
+}
+
+/* ====================== Ich ====================== */
+async function renderMe() {
+  setHeader('Ich', S.athlete.name);
+  const pend = Outbox.list().length;
+  $('#main').innerHTML = `
+    <div class="card"><b>${esc(S.athlete.name)}</b><div class="small muted">Trainingsplan: ${esc(S.athlete.plan)} · Kraftplan: ${esc(S.athlete.kraftplan)}</div>
+      <button class="btn sec block" id="switch" style="margin-top:10px">Anderen Namen wählen</button></div>
+    <div class="card"><b>Concept2-Logbuch</b><div class="small muted" id="c2st">Prüfe …</div><div id="c2btn"></div></div>
+    <div class="card"><b>Nicht gesendete Einträge</b><div class="small muted">${pend ? pend + ' warten auf Netz.' : 'Alles gesendet ✓'}</div>
+      ${pend ? '<button class="btn sec block" id="flush2" style="margin-top:8px">Jetzt senden</button>' : ''}</div>
+    <div class="card"><b>Als App installieren</b><div class="small muted">iPhone: in Safari Teilen ⬆︎ → „Zum Home-Bildschirm“.<br>Android: in Chrome Menü ⋮ → „App installieren“.</div></div>
+    <div class="card"><button class="btn ghost" id="logout">Team-Code zurücksetzen</button></div>`;
+  $('#switch').onclick = async () => { try { const d = await api('init'); renderSetup(2, d.athletes); } catch (e) { toast(e.message); } };
+  $('#logout').onclick = () => { if (confirm('Team-Code und Namen auf diesem Gerät löschen?')) { ['team', 'athlete', 'plancache'].forEach(k => LS.del(k)); location.reload(); } };
+  $('#flush2') && ($('#flush2').onclick = () => Outbox.flush().then(renderMe));
+  try {
+    const st = await api('c2status', { athlete: S.athlete.name });
+    if (!st.configured) { $('#c2st').textContent = 'Vom Trainer noch nicht eingerichtet.'; return; }
+    $('#c2st').textContent = st.connected ? 'Verbunden ✓ – Ergo-Ergebnisse lassen sich beim Protokollieren übernehmen.' : 'Nicht verbunden.';
+    $('#c2btn').innerHTML = st.connected ? '<button class="btn ghost" id="c2off">Verbindung trennen</button>' : '<button class="btn sec block" id="c2on" style="margin-top:8px">Concept2 verbinden</button>';
+    $('#c2on') && ($('#c2on').onclick = connectC2);
+    $('#c2off') && ($('#c2off').onclick = async () => { await api('c2disconnect', { athlete: S.athlete.name }); renderMe(); });
+  } catch (e) { $('#c2st').textContent = e.message; }
+}
+
+boot();
+</script>
+</body>
+</html>
